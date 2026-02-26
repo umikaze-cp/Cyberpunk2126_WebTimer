@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ネオン虹色カウントダウン（10分）</title>
+  <style>
+    body {
+      text-align: center;
+      font-size: 120px;
+      font-family: monospace;
+      background-image: url("CP_image_2.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    @keyframes rainbowGlow {
+      0% {
+        color: red;
+        border-color: red;
+        text-shadow: 0 0 20px red, 0 0 40px red;
+      }
+
+      16% {
+        color: orange;
+        border-color: orange;
+        text-shadow: 0 0 20px orange, 0 0 40px orange;
+      }
+
+      32% {
+        color: yellow;
+        border-color: yellow;
+        text-shadow: 0 0 20px yellow, 0 0 40px yellow;
+      }
+
+      48% {
+        color: lime;
+        border-color: lime;
+        text-shadow: 0 0 20px lime, 0 0 40px lime;
+      }
+
+      64% {
+        color: cyan;
+        border-color: cyan;
+        text-shadow: 0 0 20px cyan, 0 0 40px cyan;
+      }
+
+      82% {
+        color: blue;
+        border-color: blue;
+        text-shadow: 0 0 20px blue, 0 0 40px blue;
+      }
+
+      100% {
+        color: violet;
+        border-color: violet;
+        text-shadow: 0 0 20px violet, 0 0 40px violet;
+      }
+    }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+      }
+
+      23% {
+        opacity: 1;
+      }
+
+      77% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    #clock {
+      padding: 40px 70px;
+      border: 10px solid;
+      border-radius: 30px;
+      animation: rainbowGlow 3s linear infinite;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 1;
+    }
+
+    .fade-message {
+      animation: fadeInOut 3s ease-in-out;
+    }
+
+    /* 開始ボタン＋コントロールパネル */
+    #startOverlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 10;
+    }
+
+    #panel {
+      width: min(520px, 92vw);
+      padding: 22px 18px;
+      border-radius: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(6px);
+      text-align: center;
+    }
+
+    #panelTitle {
+      font-size: 20px;
+      margin: 0 0 14px;
+      letter-spacing: 0.02em;
+      opacity: 0.95;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+
+    label {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    input[type="number"] {
+      width: 90px;
+      font-size: 18px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      outline: none;
+    }
+
+    .btn {
+      font-size: 18px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      filter: brightness(1.15);
+    }
+
+    #hint {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-top: 10px;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- コントロールパネル付きオーバーレイ -->
+  <div id="startOverlay">
+    <div id="panel">
+      <p id="panelTitle">カウントダウン設定</p>
+
+      <div class="row">
+        <label for="minInput">分</label>
+        <input id="minInput" type="number" min="0" max="99" value="10" />
+        <label for="secInput">秒</label>
+        <input id="secInput" type="number" min="0" max="59" value="0" />
+      </div>
+
+      <div class="row">
+        <button id="applyBtn" class="btn">設定を反映</button>
+        <button id="resetBtn" class="btn">10:00に戻す</button>
+      </div>
+
+      <!-- ★追加：音ON/OFFボタン -->
+      <div class="row">
+        <button id="bgmToggleBtn" class="btn">BGM: ON</button>
+        <button id="seToggleBtn" class="btn">効果音: ON</button>
+      </div>
+
+      <div class="row">
+        <button id="startBtn" class="btn">▶ スタート</button>
+      </div>
+
+      <div id="hint">
+        ※ スタート後に時間を変えたい場合は、リロードするか
+        「停止/再設定」機能を追加できます。
+      </div>
+    </div>
+  </div>
+
+  <div id="clock">10:00</div>
+
+  <!-- 音素材（ファイル名を差し替えてね） -->
+  <audio id="soundA" src="BGM.mp3" preload="auto" loop></audio>
+  <audio id="soundB" src="bike_A.mp3" preload="auto"></audio>
+  <audio id="soundC" src="bike_B.mp3" preload="auto"></audio>
+
+  <script>
+    // ====== 設定 ======
+    let remaining = 10 * 60; // 初期 10分
+    const messages = [
+      "お前が戻ってくるって、俺は信じてる！",
+      "I know you will be back"
+    ];
+
+    // ====== 要素 ======
+    const clockEl = document.getElementById("clock");
+    const startOverlay = document.getElementById("startOverlay");
+
+    const minInput = document.getElementById("minInput");
+    const secInput = document.getElementById("secInput");
+    const applyBtn = document.getElementById("applyBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const startBtn = document.getElementById("startBtn");
+
+    const bgmToggleBtn = document.getElementById("bgmToggleBtn");
+    const seToggleBtn = document.getElementById("seToggleBtn");
+
+    const soundA = document.getElementById("soundA");
+    const soundB = document.getElementById("soundB");
+    const soundC = document.getElementById("soundC");
+
+    // ====== ON/OFF状態（追加） ======
+    let bgmEnabled = true; // soundA
+    let seEnabled = true;  // soundB + soundC
+
+    function updateSoundButtons() {
+      bgmToggleBtn.textContent = `BGM: ${bgmEnabled ? "ON" : "OFF"}`;
+      seToggleBtn.textContent = `効果音: ${seEnabled ? "ON" : "OFF"}`;
+    }
+
+    bgmToggleBtn.addEventListener("click", () => {
+      bgmEnabled = !bgmEnabled;
+
+      if (!bgmEnabled) {
+        // いま鳴っていたら止める
+        soundA.pause();
+        soundA.currentTime = 0;
+      } else {
+        // カウントダウン中なら再開
+        if (startOverlay.style.display === "none" && countdownTimerId) {
+          soundA.volume = 0.6;
+          soundA.play().catch(() => { });
+        }
+      }
+      updateSoundButtons();
+    });
+
+    seToggleBtn.addEventListener("click", () => {
+      seEnabled = !seEnabled;
+
+      if (!seEnabled) {
+        // いま鳴っていたら止める（B/Cのみ）
+        soundB.pause(); soundB.currentTime = 0;
+        soundC.pause(); soundC.currentTime = 0;
+      }
+      updateSoundButtons();
+    });
+
+    updateSoundButtons();
+
+    // ====== タイマー ======
+    let countdownTimerId = null;
+    let messageTimerId = null;
+
+    // ====== メッセージ ======
+    let messageIndex = 0;
+
+    function startMessageSequence() {
+      function showMessage() {
+        clockEl.textContent = messages[messageIndex];
+        messageIndex = (messageIndex + 1) % messages.length;
+
+        clockEl.classList.remove("fade-message");
+        void clockEl.offsetWidth;
+        clockEl.classList.add("fade-message");
+      }
+
+      showMessage();
+      messageTimerId = setInterval(showMessage, 3000);
+    }
+
+    // ====== 音のシーケンス制御 ======
+    let engineLoopsLeft = 2;
+    let cycleMode = false; // trueになったら(B→C)無限ループ
+
+    function stopAllSounds() {
+      [soundA, soundB, soundC].forEach(a => {
+        a.pause();
+        a.currentTime = 0;
+      });
+    }
+
+    function stopTimers() {
+      if (countdownTimerId) clearInterval(countdownTimerId);
+      if (messageTimerId) clearInterval(messageTimerId);
+      countdownTimerId = null;
+      messageTimerId = null;
+    }
+
+    function setRemainingFromInputs() {
+      // 入力値を安全に丸める
+      const m = Math.max(0, Math.min(99, parseInt(minInput.value || "0", 10)));
+      const s = Math.max(0, Math.min(59, parseInt(secInput.value || "0", 10)));
+
+      minInput.value = String(m);
+      secInput.value = String(s);
+
+      remaining = m * 60 + s;
+      // 表示も更新
+      const mm = String(m).padStart(2, "0");
+      const ss = String(s).padStart(2, "0");
+      clockEl.textContent = `${mm}:${ss}`;
+    }
+
+    // Bを「loop属性」で無限にしない。endedで手動制御する
+    soundB.addEventListener("ended", () => {
+      if (!seEnabled) return;
+
+      if (!cycleMode) {
+        engineLoopsLeft--;
+        if (engineLoopsLeft > 0) {
+          soundB.currentTime = 0;
+          soundB.play().catch(() => { });
+        } else {
+          soundC.currentTime = 0;
+          soundC.play().catch(() => { });
+        }
+      } else {
+        soundC.currentTime = 0;
+        soundC.play().catch(() => { });
+      }
+    });
+
+    soundC.addEventListener("ended", () => {
+      if (!seEnabled) return;
+
+      cycleMode = true;
+      soundB.currentTime = 0;
+      soundB.play().catch(() => { });
+    });
+
+    function startFinishSoundSequence() {
+      // 効果音OFFなら何もしない
+      if (!seEnabled) return;
+
+      // ★★ ここを修正：BGM(A)を止めない ★★
+      // soundA.pause();
+      // soundA.currentTime = 0;
+
+      engineLoopsLeft = 2;
+      cycleMode = false;
+
+      soundB.currentTime = 0;
+      soundB.play().catch(() => { });
+    }
+
+    // ====== カウントダウン ======
+    function updateCountdown() {
+      const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+      const seconds = String(remaining % 60).padStart(2, "0");
+      clockEl.textContent = `${minutes}:${seconds}`;
+
+      if (remaining > 0) {
+        remaining--;
+      } else {
+        clearInterval(countdownTimerId);
+        countdownTimerId = null;
+
+        // ★任意：終了後にBGMを少し下げる（B/Cが聞こえやすくなる）
+        if (bgmEnabled) soundA.volume = 0.25;
+
+        startMessageSequence();
+        startFinishSoundSequence();
+      }
+    }
+
+    function startAll() {
+      startOverlay.style.display = "none";
+
+      // カウントダウン中BGM(A)
+      if (bgmEnabled) {
+        soundA.volume = 0.6;
+        soundA.play().catch(() => { });
+      }
+
+      // タイマー開始
+      countdownTimerId = setInterval(updateCountdown, 1000);
+      updateCountdown();
+    }
+
+    // ====== パネル操作 ======
+    // 初期表示を入力値に合わせる
+    setRemainingFromInputs();
+
+    applyBtn.addEventListener("click", () => {
+      setRemainingFromInputs();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      minInput.value = "1";
+      secInput.value = "0";
+      setRemainingFromInputs();
+    });
+
+    // Enterでも反映しやすく
+    [minInput, secInput].forEach(el => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") setRemainingFromInputs();
+      });
+    });
+
+    // 開始ボタン（自動再生制限回避）
+    startBtn.addEventListener("click", () => {
+      // 念のため初期化
+      stopTimers();
+      stopAllSounds();
+
+      // 設定値を反映してスタート
+      setRemainingFromInputs();
+      startAll();
+    });
+  </script>
+</body>
+
+</html>
