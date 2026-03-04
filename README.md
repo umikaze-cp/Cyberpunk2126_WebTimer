@@ -1,13 +1,13 @@
-# Cyberpunk2126 Countdown Timer
+# Cyberpunk2126 WebTimer
 
-架空アニメーション「Cyberpunk2126」の世界観を表現した、プロモーション用カウントダウンWebタイマーです。
+架空アニメーション「Cyberpunk2126」の世界観を表現した、プロモーション用Webタイマーです。
 **視覚（ネオン演出）＋音（BGM/効果音）＋演出（終了時メッセージ）**を統合して制作しました。
 
 ## Demo
-- GitHub Pages：<ここにURLを貼る>
+- GitHub Pages：git@github.com:202510-aw-oi/Cyberpunk2126-WebTimer.git
 
 ## 概要 / コンセプト
-- 作品名：Cyberpunk2126 プロモーション用カウントダウンWebタイマー
+- 作品名：Cyberpunk2126 プロモーション用Webタイマー
 - コンセプト：宣伝用途を想定し、サイバーパンク世界観を「視覚＋音＋演出」で体験できるタイマーとして企画・制作
 
 ## 主な機能
