@@ -1,141 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8" />
   <title>Cyberpunk2126 WebTimer</title>
 
-    <!-- 追加：favicon -->
+  <!-- favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/CP_favicon_3.png" />
 
-  <style>
-    body {
-      text-align: center;
-      font-size: 120px;
-      font-family: monospace;
-      background-image: url("assets/images/CP_image.jpg");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      color: white;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    @keyframes rainbowGlow {
-      0% { color: red; border-color: red; text-shadow: 0 0 20px red, 0 0 40px red; }
-      16% { color: orange; border-color: orange; text-shadow: 0 0 20px orange, 0 0 40px orange; }
-      32% { color: yellow; border-color: yellow; text-shadow: 0 0 20px yellow, 0 0 40px yellow; }
-      48% { color: lime; border-color: lime; text-shadow: 0 0 20px lime, 0 0 40px lime; }
-      64% { color: cyan; border-color: cyan; text-shadow: 0 0 20px cyan, 0 0 40px cyan; }
-      82% { color: blue; border-color: blue; text-shadow: 0 0 20px blue, 0 0 40px blue; }
-      100% { color: violet; border-color: violet; text-shadow: 0 0 20px violet, 0 0 40px violet; }
-    }
-
-    @keyframes fadeInOut {
-      0% { opacity: 0; }
-      23% { opacity: 1; }
-      77% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    #clock {
-      padding: 40px 70px;
-      border: 10px solid;
-      border-radius: 30px;
-      animation: rainbowGlow 3s linear infinite;
-      background: rgba(0, 0, 0, 0.35);
-      z-index: 1;
-    }
-
-    .fade-message {
-      animation: fadeInOut 3s ease-in-out;
-    }
-
-    /* ===== 追加：表示切り替え用 ===== */
-    #timeDisplay { display: inline; }      /* mm:ss は従来どおり大きい（bodyの120pxを継承） */
-    #msgJa { display: none; font-size: calc(100% - 10pt); } /* 日本語だけ10pt小さく */
-    #msgEn { display: none; font-size: 100%; }             /* 英語は個別に調整可（ここを変える） */
-
-    /* 開始ボタン＋コントロールパネル */
-    #startOverlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 10;
-    }
-
-    #panel {
-      width: min(520px, 92vw);
-      padding: 22px 18px;
-      border-radius: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(6px);
-      text-align: center;
-    }
-
-    #panelTitle {
-      font-size: 20px;
-      margin: 0 0 14px;
-      letter-spacing: 0.02em;
-      opacity: 0.95;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      margin: 10px 0;
-    }
-
-    label {
-      font-size: 16px;
-      opacity: 0.9;
-    }
-
-    input[type="number"] {
-      width: 90px;
-      font-size: 18px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      outline: none;
-    }
-
-    .btn {
-      font-size: 18px;
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      filter: brightness(1.15);
-    }
-
-    #hint {
-      font-size: 14px;
-      opacity: 0.85;
-      margin-top: 10px;
-      line-height: 1.35;
-    }
-  </style>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -156,7 +29,7 @@
         <button id="resetBtn" class="btn">10:00に戻す</button>
       </div>
 
-      <!-- ★追加：音ON/OFFボタン -->
+      <!-- 音ON/OFFボタン -->
       <div class="row">
         <button id="bgmToggleBtn" class="btn">BGM: ON</button>
         <button id="seToggleBtn" class="btn">効果音: ON</button>
@@ -173,253 +46,19 @@
     </div>
   </div>
 
-  <!-- ===== 修正：clockの中を分割（時間 / 日本語 / 英語） ===== -->
+  <!-- clock（時間 / 日本語 / 英語） -->
   <div id="clock">
     <span id="timeDisplay">10:00</span>
     <span id="msgJa"></span>
     <span id="msgEn"></span>
   </div>
 
-  <!-- 音素材（ファイル名を差し替えてね） -->
+  <!-- 音素材 -->
   <audio id="soundA" src="assets/sounds/BGM.mp3" preload="auto" loop></audio>
   <audio id="soundB" src="assets/sounds/bike_A.mp3" preload="auto"></audio>
   <audio id="soundC" src="assets/sounds/bike_B.mp3" preload="auto"></audio>
 
-  <script>
-    // ====== 設定 ======
-    let remaining = 10 * 60; // 初期 10分
-    const messages = [
-      { lang: "ja", text: "お前は絶対戻ってくるって信じてた！" },
-      { lang: "en", text: "I knew you'd come back" }
-    ];
-
-    // ====== 要素 ======
-    const clockEl = document.getElementById("clock");
-    const startOverlay = document.getElementById("startOverlay");
-
-    const timeDisplay = document.getElementById("timeDisplay");
-    const msgJa = document.getElementById("msgJa");
-    const msgEn = document.getElementById("msgEn");
-
-    const minInput = document.getElementById("minInput");
-    const secInput = document.getElementById("secInput");
-    const applyBtn = document.getElementById("applyBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const startBtn = document.getElementById("startBtn");
-
-    const bgmToggleBtn = document.getElementById("bgmToggleBtn");
-    const seToggleBtn = document.getElementById("seToggleBtn");
-
-    const soundA = document.getElementById("soundA");
-    const soundB = document.getElementById("soundB");
-    const soundC = document.getElementById("soundC");
-
-    // ====== 表示切り替え ======
-    function showTime(mmss) {
-      timeDisplay.style.display = "inline";
-      msgJa.style.display = "none";
-      msgEn.style.display = "none";
-      timeDisplay.textContent = mmss;
-    }
-
-    function showMessage(lang, text) {
-      timeDisplay.style.display = "none";
-      msgJa.style.display = "none";
-      msgEn.style.display = "none";
-
-      if (lang === "ja") {
-        msgJa.textContent = text;
-        msgJa.style.display = "inline";
-      } else {
-        msgEn.textContent = text;
-        msgEn.style.display = "inline";
-      }
-
-      clockEl.classList.remove("fade-message");
-      void clockEl.offsetWidth;
-      clockEl.classList.add("fade-message");
-    }
-
-    // ====== ON/OFF状態 ======
-    let bgmEnabled = true; // soundA
-    let seEnabled = true;  // soundB + soundC
-
-    function updateSoundButtons() {
-      bgmToggleBtn.textContent = `BGM: ${bgmEnabled ? "ON" : "OFF"}`;
-      seToggleBtn.textContent = `効果音: ${seEnabled ? "ON" : "OFF"}`;
-    }
-
-    bgmToggleBtn.addEventListener("click", () => {
-      bgmEnabled = !bgmEnabled;
-
-      if (!bgmEnabled) {
-        soundA.pause();
-        soundA.currentTime = 0;
-      } else {
-        if (startOverlay.style.display === "none" && countdownTimerId) {
-          soundA.volume = 0.6;
-          soundA.play().catch(() => { });
-        }
-      }
-      updateSoundButtons();
-    });
-
-    seToggleBtn.addEventListener("click", () => {
-      seEnabled = !seEnabled;
-
-      if (!seEnabled) {
-        soundB.pause(); soundB.currentTime = 0;
-        soundC.pause(); soundC.currentTime = 0;
-      }
-      updateSoundButtons();
-    });
-
-    updateSoundButtons();
-
-    // ====== タイマー ======
-    let countdownTimerId = null;
-    let messageTimerId = null;
-
-    // ====== メッセージ ======
-    let messageIndex = 0;
-
-    function startMessageSequence() {
-      function tickMessage() {
-        const m = messages[messageIndex];
-        messageIndex = (messageIndex + 1) % messages.length;
-        showMessage(m.lang, m.text);
-      }
-
-      tickMessage();
-      messageTimerId = setInterval(tickMessage, 3000);
-    }
-
-    // ====== 音のシーケンス制御 ======
-    let engineLoopsLeft = 2;
-    let cycleMode = false;
-
-    function stopAllSounds() {
-      [soundA, soundB, soundC].forEach(a => {
-        a.pause();
-        a.currentTime = 0;
-      });
-    }
-
-    function stopTimers() {
-      if (countdownTimerId) clearInterval(countdownTimerId);
-      if (messageTimerId) clearInterval(messageTimerId);
-      countdownTimerId = null;
-      messageTimerId = null;
-    }
-
-    function setRemainingFromInputs() {
-      const m = Math.max(0, Math.min(99, parseInt(minInput.value || "0", 10)));
-      const s = Math.max(0, Math.min(59, parseInt(secInput.value || "0", 10)));
-
-      minInput.value = String(m);
-      secInput.value = String(s);
-
-      remaining = m * 60 + s;
-
-      const mm = String(m).padStart(2, "0");
-      const ss = String(s).padStart(2, "0");
-      showTime(`${mm}:${ss}`);
-    }
-
-    soundB.addEventListener("ended", () => {
-      if (!seEnabled) return;
-
-      if (!cycleMode) {
-        engineLoopsLeft--;
-        if (engineLoopsLeft > 0) {
-          soundB.currentTime = 0;
-          soundB.play().catch(() => { });
-        } else {
-          soundC.currentTime = 0;
-          soundC.play().catch(() => { });
-        }
-      } else {
-        soundC.currentTime = 0;
-        soundC.play().catch(() => { });
-      }
-    });
-
-    soundC.addEventListener("ended", () => {
-      if (!seEnabled) return;
-
-      cycleMode = true;
-      soundB.currentTime = 0;
-      soundB.play().catch(() => { });
-    });
-
-    function startFinishSoundSequence() {
-      if (!seEnabled) return;
-
-      engineLoopsLeft = 2;
-      cycleMode = false;
-
-      soundB.currentTime = 0;
-      soundB.play().catch(() => { });
-    }
-
-    // ====== カウントダウン ======
-    function updateCountdown() {
-      const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
-      const seconds = String(remaining % 60).padStart(2, "0");
-      showTime(`${minutes}:${seconds}`);
-
-      if (remaining > 0) {
-        remaining--;
-      } else {
-        clearInterval(countdownTimerId);
-        countdownTimerId = null;
-
-        if (bgmEnabled) soundA.volume = 0.25;
-
-        startMessageSequence();
-        startFinishSoundSequence();
-      }
-    }
-
-    function startAll() {
-      startOverlay.style.display = "none";
-
-      if (bgmEnabled) {
-        soundA.volume = 0.6;
-        soundA.play().catch(() => { });
-      }
-
-      countdownTimerId = setInterval(updateCountdown, 1000);
-      updateCountdown();
-    }
-
-    // ====== パネル操作 ======
-    setRemainingFromInputs();
-
-    applyBtn.addEventListener("click", () => {
-      setRemainingFromInputs();
-    });
-
-    resetBtn.addEventListener("click", () => {
-      minInput.value = "1";
-      secInput.value = "0";
-      setRemainingFromInputs();
-    });
-
-    [minInput, secInput].forEach(el => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") setRemainingFromInputs();
-      });
-    });
-
-    startBtn.addEventListener("click", () => {
-      stopTimers();
-      stopAllSounds();
-
-      setRemainingFromInputs();
-      startAll();
-    });
-  </script>
+  <!-- JS（bodyの最後で読み込む） -->
+  <script src="script.js"></script>
 </body>
-
 </html>
