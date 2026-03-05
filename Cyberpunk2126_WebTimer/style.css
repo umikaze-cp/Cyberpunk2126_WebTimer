@@ -1,0 +1,126 @@
+body {
+  text-align: center;
+  font-size: 120px;
+  font-family: monospace;
+  background-image: url("assets/images/CP_image.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: white;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+@keyframes rainbowGlow {
+  0%   { color: red;    border-color: red;    text-shadow: 0 0 20px red,    0 0 40px red; }
+  16%  { color: orange; border-color: orange; text-shadow: 0 0 20px orange, 0 0 40px orange; }
+  32%  { color: yellow; border-color: yellow; text-shadow: 0 0 20px yellow, 0 0 40px yellow; }
+  48%  { color: lime;   border-color: lime;   text-shadow: 0 0 20px lime,   0 0 40px lime; }
+  64%  { color: cyan;   border-color: cyan;   text-shadow: 0 0 20px cyan,   0 0 40px cyan; }
+  82%  { color: blue;   border-color: blue;   text-shadow: 0 0 20px blue,   0 0 40px blue; }
+  100% { color: violet; border-color: violet; text-shadow: 0 0 20px violet, 0 0 40px violet; }
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; }
+  23%  { opacity: 1; }
+  77%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#clock {
+  padding: 40px 70px;
+  border: 10px solid;
+  border-radius: 30px;
+  animation: rainbowGlow 3s linear infinite;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+.fade-message {
+  animation: fadeInOut 3s ease-in-out;
+}
+
+/* 表示切り替え用 */
+#timeDisplay { display: inline; }
+#msgJa { display: none; font-size: calc(100% - 10pt); }
+#msgEn { display: none; font-size: 100%; }
+
+/* 開始ボタン＋コントロールパネル */
+#startOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 10;
+}
+
+#panel {
+  width: min(520px, 92vw);
+  padding: 22px 18px;
+  border-radius: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+#panelTitle {
+  font-size: 20px;
+  margin: 0 0 14px;
+  letter-spacing: 0.02em;
+  opacity: 0.95;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+label {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+input[type="number"] {
+  width: 90px;
+  font-size: 18px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  outline: none;
+}
+
+.btn {
+  font-size: 18px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.15);
+}
+
+#hint {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-top: 10px;
+  line-height: 1.35;
+}

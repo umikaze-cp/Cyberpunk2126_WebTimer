@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyberpunk2126 WebTimer</title>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/CP_favicon_3.png" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- コントロールパネル付きオーバーレイ -->
+  <div id="startOverlay">
+    <div id="panel">
+      <p id="panelTitle">カウントダウン設定</p>
+
+      <div class="row">
+        <label for="minInput">分</label>
+        <input id="minInput" type="number" min="0" max="99" value="10" />
+        <label for="secInput">秒</label>
+        <input id="secInput" type="number" min="0" max="59" value="0" />
+      </div>
+
+      <div class="row">
+        <button id="applyBtn" class="btn">設定を反映</button>
+        <button id="resetBtn" class="btn">10:00に戻す</button>
+      </div>
+
+      <!-- 音ON/OFFボタン -->
+      <div class="row">
+        <button id="bgmToggleBtn" class="btn">BGM: ON</button>
+        <button id="seToggleBtn" class="btn">効果音: ON</button>
+      </div>
+
+      <div class="row">
+        <button id="startBtn" class="btn">▶ スタート</button>
+      </div>
+
+      <div id="hint">
+        ※ スタート後に時間を変えたい場合は、リロードするか
+        「停止/再設定」機能を追加できます。
+      </div>
+    </div>
+  </div>
+
+  <!-- clock（時間 / 日本語 / 英語） -->
+  <div id="clock">
+    <span id="timeDisplay">10:00</span>
+    <span id="msgJa"></span>
+    <span id="msgEn"></span>
+  </div>
+
+  <!-- 音素材 -->
+  <audio id="soundA" src="assets/sounds/BGM.mp3" preload="auto" loop></audio>
+  <audio id="soundB" src="assets/sounds/bike_A.mp3" preload="auto"></audio>
+  <audio id="soundC" src="assets/sounds/bike_B.mp3" preload="auto"></audio>
+
+  <!-- JS（bodyの最後で読み込む） -->
+  <script src="script.js"></script>
+</body>
+</html>
