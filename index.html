@@ -1,64 +1,120 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>Cyberpunk2126 WebTimer</title>
 
-  <!-- favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/CP_favicon_3.png" />
-
-  <!-- CSS -->
+  <link rel="icon" type="image/png" sizes="32x32" href="CP_favicon_3.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- コントロールパネル付きオーバーレイ -->
   <div id="startOverlay">
     <div id="panel">
-      <p id="panelTitle">カウントダウン設定</p>
+      <div id="launchFlash"></div>
+      <span class="panel-cut lt"></span>
+      <span class="panel-cut rb"></span>
 
-      <div class="row">
-        <label for="minInput">分</label>
-        <input id="minInput" type="number" min="0" max="99" value="10" />
-        <label for="secInput">秒</label>
-        <input id="secInput" type="number" min="0" max="59" value="0" />
-      </div>
+      <div id="panelContent">
+        <div class="panel-header">
+          <div class="header-left">
+            <span class="eyebrow">Emergency escape console</span>
+            <p id="panelTitle">PRE-LAUNCH</p>
+          </div>
+          <div class="header-status">
+            <span class="status-dot"></span>system ready
+          </div>
+        </div>
 
-      <div class="row">
-        <button id="applyBtn" class="btn">設定を反映</button>
-        <button id="resetBtn" class="btn">10:00に戻す</button>
-      </div>
+        <div class="module">
+          <div class="module-header">
+            <span class="module-title">Detonation Timer</span>
+            <span class="module-sub">Countdown core</span>
+          </div>
 
-      <!-- 音ON/OFFボタン -->
-      <div class="row">
-        <button id="bgmToggleBtn" class="btn">BGM: ON</button>
-        <button id="seToggleBtn" class="btn">効果音: ON</button>
-      </div>
+          <div class="time-picker-wrap">
+            <div class="time-picker" aria-label="時間設定">
+              <div class="time-field">
+                <span class="time-label">MIN</span>
+                <input id="minInput" class="time-input" type="number" min="0" max="99" value="10" inputmode="numeric" />
+              </div>
 
-      <div class="row">
-        <button id="startBtn" class="btn">▶ スタート</button>
-      </div>
+              <div class="time-separator">:</div>
 
-      <div id="hint">
-        ※ スタート後に時間を変えたい場合は、リロードするか
-        「停止/再設定」機能を追加できます。
+              <div class="time-field">
+                <span class="time-label">SEC</span>
+                <input id="secInput" class="time-input" type="number" min="0" max="59" value="0" inputmode="numeric" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module">
+          <div class="module-header">
+            <span class="module-title">Audio System</span>
+            <span class="module-sub">Cockpit feedback</span>
+          </div>
+
+          <div class="switch-row">
+            <label id="bgmSwitch" class="switch is-on">
+              <span class="switch-text-wrap">
+                <span class="switch-text">BGM</span>
+                <span class="switch-meta">ambient loop</span>
+              </span>
+              <input id="bgmToggleInput" type="checkbox" checked />
+              <span class="switch-track">
+                <span class="switch-thumb"></span>
+              </span>
+            </label>
+
+            <label id="seSwitch" class="switch is-on">
+              <span class="switch-text-wrap">
+                <span class="switch-text">SFX</span>
+                <span class="switch-meta">engine burst</span>
+              </span>
+              <input id="seToggleInput" type="checkbox" checked />
+              <span class="switch-track">
+                <span class="switch-thumb"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="module launch-block">
+          <div class="module-header">
+            <span class="module-title">Launch Control</span>
+            <span class="module-sub">Final authorization</span>
+          </div>
+
+          <button id="startBtn">▶ ENGAGE</button>
+
+          <div id="hint">
+            <span class="hint-top">manual override</span>
+            時間は入力と同時に反映されます。<br />
+            Enterキーでもスタートできます。
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <span class="footer-left">route locked</span>
+          <span class="footer-right">escape sequence standby</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- clock（時間 / 日本語 / 英語） -->
-  <div id="clock">
+  <div id="clock" class="prelaunch-hidden">
     <span id="timeDisplay">10:00</span>
     <span id="msgJa"></span>
     <span id="msgEn"></span>
   </div>
 
-  <!-- 音素材 -->
-  <audio id="soundA" src="assets/sounds/BGM.mp3" preload="auto" loop></audio>
-  <audio id="soundB" src="assets/sounds/bike_A.mp3" preload="auto"></audio>
-  <audio id="soundC" src="assets/sounds/bike_B.mp3" preload="auto"></audio>
+  <audio id="soundA" src="BGM.mp3" preload="auto" loop></audio>
+  <audio id="soundB" src="bike_A.mp3" preload="auto"></audio>
+  <audio id="soundC" src="bike_B.mp3" preload="auto"></audio>
 
-  <!-- JS（bodyの最後で読み込む） -->
   <script src="script.js"></script>
 </body>
+
 </html>
