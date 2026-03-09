@@ -4,7 +4,7 @@
 **視覚（ネオン演出）＋音（BGM/効果音）＋演出（終了時メッセージ）**を統合して制作しました。
 
 ## Demo
-- [Cyberpunk2126](https://umikaze-web.sakura.ne.jp/)
+- [Cyberpunk2126](https://kurata-ritsu-dev.github.io/Cyberpunk2126-WebTimer/)
 
 ## 概要 / コンセプト
 - 作品名：Cyberpunk2126 プロモーション用Webタイマー
