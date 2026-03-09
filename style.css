@@ -18,9 +18,10 @@ body {
   text-align: center;
   font-size: 120px;
   font-family: monospace;
+  background-color: #080505;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
-    url("CP_image.jpg");
+    url("assets/images/CP_image.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -33,6 +34,13 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+}
+
+/* 画像が存在しない場合でも最低限見た目が崩れない */
+body.image-fallback {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)),
+    radial-gradient(circle at center, #35160a 0%, #100806 55%, #050304 100%);
 }
 
 @keyframes rainbowGlow {
@@ -200,7 +208,6 @@ body {
     color 0.25s ease;
 }
 
-/* メッセージ表示中は枠だけ消す。文字色は虹ネオンのまま */
 #clock.message-mode {
   border-color: transparent !important;
   box-shadow: none !important;
@@ -224,7 +231,6 @@ body {
   animation: fadeInOut 3s ease-in-out;
 }
 
-/* メッセージ時も虹色ネオン + フェード */
 #clock.message-mode.fade-message {
   animation:
     rainbowGlow 3s linear infinite,

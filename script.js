@@ -1,292 +1,400 @@
-let remaining = 10 * 60;
+(() => {
+  "use strict";
 
-const messages = [
-  { lang: "ja", text: "お前は絶対戻ってくるって信じてた！" },
-  { lang: "en", text: "I knew you'd come back" }
-];
+  // =========================
+  // Asset paths
+  // =========================
+  const ASSETS = {
+    backgroundImage: "assets/images/CP_image.jpg",
+    favicon: "assets/images/CP_favicon_3.png",
+    bgm: "assets/sounds/BGM.mp3",
+    sfxA: "assets/sounds/bike_A.mp3",
+    sfxB: "assets/sounds/bike_B.mp3",
+  };
 
-const clockEl = document.getElementById("clock");
-const startOverlay = document.getElementById("startOverlay");
-const panelEl = document.getElementById("panel");
-const launchFlash = document.getElementById("launchFlash");
+  // =========================
+  // Messages
+  // =========================
+  const messages = [
+    { lang: "ja", text: "お前は絶対戻ってくるって信じてた！" },
+    { lang: "en", text: "I knew you'd come back" }
+  ];
 
-const timeDisplay = document.getElementById("timeDisplay");
-const msgJa = document.getElementById("msgJa");
-const msgEn = document.getElementById("msgEn");
+  // =========================
+  // DOM refs
+  // =========================
+  const clockEl = document.getElementById("clock");
+  const startOverlay = document.getElementById("startOverlay");
+  const panelEl = document.getElementById("panel");
+  const launchFlash = document.getElementById("launchFlash");
 
-const minInput = document.getElementById("minInput");
-const secInput = document.getElementById("secInput");
-const startBtn = document.getElementById("startBtn");
+  const timeDisplay = document.getElementById("timeDisplay");
+  const msgJa = document.getElementById("msgJa");
+  const msgEn = document.getElementById("msgEn");
 
-const bgmSwitch = document.getElementById("bgmSwitch");
-const seSwitch = document.getElementById("seSwitch");
-const bgmToggleInput = document.getElementById("bgmToggleInput");
-const seToggleInput = document.getElementById("seToggleInput");
+  const minInput = document.getElementById("minInput");
+  const secInput = document.getElementById("secInput");
+  const startBtn = document.getElementById("startBtn");
 
-const soundA = document.getElementById("soundA");
-const soundB = document.getElementById("soundB");
-const soundC = document.getElementById("soundC");
+  const bgmSwitch = document.getElementById("bgmSwitch");
+  const seSwitch = document.getElementById("seSwitch");
+  const bgmToggleInput = document.getElementById("bgmToggleInput");
+  const seToggleInput = document.getElementById("seToggleInput");
 
-let bgmEnabled = true;
-let seEnabled = true;
+  const soundA = document.getElementById("soundA");
+  const soundB = document.getElementById("soundB");
+  const soundC = document.getElementById("soundC");
 
-let countdownTimerId = null;
-let messageTimerId = null;
+  // =========================
+  // State
+  // =========================
+  let remaining = 10 * 60;
+  let bgmEnabled = true;
+  let seEnabled = true;
 
-let messageIndex = 0;
-let engineLoopsLeft = 2;
-let cycleMode = false;
-let isLaunching = false;
+  let countdownTimerId = null;
+  let messageTimerId = null;
 
-function showTime(mmss) {
-  clockEl.classList.remove("message-mode");
+  let messageIndex = 0;
+  let engineLoopsLeft = 2;
+  let cycleMode = false;
+  let isLaunching = false;
 
-  timeDisplay.style.display = "inline";
-  msgJa.style.display = "none";
-  msgEn.style.display = "none";
-  timeDisplay.textContent = mmss;
-}
-
-function showMessage(lang, text) {
-  clockEl.classList.add("message-mode");
-
-  timeDisplay.style.display = "none";
-  msgJa.style.display = "none";
-  msgEn.style.display = "none";
-
-  if (lang === "ja") {
-    msgJa.textContent = text;
-    msgJa.style.display = "inline";
-  } else {
-    msgEn.textContent = text;
-    msgEn.style.display = "inline";
+  // =========================
+  // Utility
+  // =========================
+  function clampInt(value, min, max) {
+    const n = parseInt(value, 10);
+    if (Number.isNaN(n)) return min;
+    return Math.max(min, Math.min(max, n));
   }
 
-  clockEl.classList.remove("fade-message");
-  void clockEl.offsetWidth;
-  clockEl.classList.add("fade-message");
-}
-
-function updateSwitchUI() {
-  bgmToggleInput.checked = bgmEnabled;
-  seToggleInput.checked = seEnabled;
-
-  bgmSwitch.classList.toggle("is-on", bgmEnabled);
-  seSwitch.classList.toggle("is-on", seEnabled);
-}
-
-function clampInt(v, min, max) {
-  const n = parseInt(v, 10);
-  if (Number.isNaN(n)) return min;
-  return Math.max(min, Math.min(max, n));
-}
-
-function formatTime(m, s) {
-  const mm = String(m).padStart(2, "0");
-  const ss = String(s).padStart(2, "0");
-  return `${mm}:${ss}`;
-}
-
-function setRemainingFromInputs({ normalizeUI = true } = {}) {
-  const m = clampInt(minInput.value || "0", 0, 99);
-  const s = clampInt(secInput.value || "0", 0, 59);
-
-  if (normalizeUI) {
-    minInput.value = String(m);
-    secInput.value = String(s).padStart(2, "0");
+  function formatTime(m, s) {
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }
 
-  remaining = m * 60 + s;
-  showTime(formatTime(m, s));
-}
-
-function onTimeInput() {
-  const m = clampInt(minInput.value || "0", 0, 99);
-  const s = clampInt(secInput.value || "0", 0, 59);
-
-  remaining = m * 60 + s;
-  showTime(formatTime(m, s));
-}
-
-function onTimeChange() {
-  setRemainingFromInputs({ normalizeUI: true });
-}
-
-function stopAllSounds() {
-  [soundA, soundB, soundC].forEach(a => {
-    a.pause();
-    a.currentTime = 0;
-  });
-}
-
-function stopTimers() {
-  if (countdownTimerId) clearInterval(countdownTimerId);
-  if (messageTimerId) clearInterval(messageTimerId);
-  countdownTimerId = null;
-  messageTimerId = null;
-}
-
-function startMessageSequence() {
-  function tickMessage() {
-    const m = messages[messageIndex];
-    messageIndex = (messageIndex + 1) % messages.length;
-    showMessage(m.lang, m.text);
+  function safePlay(audioEl) {
+    if (!audioEl) return;
+    const playPromise = audioEl.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch((error) => {
+        console.warn("Audio play failed:", audioEl.id, error);
+      });
+    }
   }
 
-  tickMessage();
-  messageTimerId = setInterval(tickMessage, 3000);
-}
+  function stopAudio(audioEl) {
+    if (!audioEl) return;
+    audioEl.pause();
+    audioEl.currentTime = 0;
+  }
 
-function startFinishSoundSequence() {
-  if (!seEnabled) return;
+  function stopAllSounds() {
+    [soundA, soundB, soundC].forEach(stopAudio);
+  }
 
-  engineLoopsLeft = 2;
-  cycleMode = false;
+  function stopTimers() {
+    if (countdownTimerId !== null) {
+      clearInterval(countdownTimerId);
+      countdownTimerId = null;
+    }
+    if (messageTimerId !== null) {
+      clearInterval(messageTimerId);
+      messageTimerId = null;
+    }
+  }
 
-  soundB.currentTime = 0;
-  soundB.play().catch(() => {});
-}
+  function resetMessageState() {
+    messageIndex = 0;
+    msgJa.textContent = "";
+    msgEn.textContent = "";
+    clockEl.classList.remove("fade-message", "message-mode");
+  }
 
-function updateCountdown() {
-  const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
-  const seconds = String(remaining % 60).padStart(2, "0");
-  showTime(`${minutes}:${seconds}`);
+  function resetFinishSoundState() {
+    engineLoopsLeft = 2;
+    cycleMode = false;
+  }
 
-  if (remaining > 0) {
-    remaining--;
-  } else {
-    clearInterval(countdownTimerId);
-    countdownTimerId = null;
+  function isOverlayHidden() {
+    return startOverlay.style.display === "none";
+  }
 
-    if (bgmEnabled) soundA.volume = 0.25;
+  // =========================
+  // UI
+  // =========================
+  function showTime(mmss) {
+    clockEl.classList.remove("message-mode");
+    timeDisplay.style.display = "inline";
+    msgJa.style.display = "none";
+    msgEn.style.display = "none";
+    timeDisplay.textContent = mmss;
+  }
+
+  function showMessage(lang, text) {
+    clockEl.classList.add("message-mode");
+
+    timeDisplay.style.display = "none";
+    msgJa.style.display = "none";
+    msgEn.style.display = "none";
+
+    if (lang === "ja") {
+      msgJa.textContent = text;
+      msgJa.style.display = "inline";
+    } else {
+      msgEn.textContent = text;
+      msgEn.style.display = "inline";
+    }
+
+    clockEl.classList.remove("fade-message");
+    void clockEl.offsetWidth;
+    clockEl.classList.add("fade-message");
+  }
+
+  function updateSwitchUI() {
+    bgmToggleInput.checked = bgmEnabled;
+    seToggleInput.checked = seEnabled;
+
+    bgmSwitch.classList.toggle("is-on", bgmEnabled);
+    seSwitch.classList.toggle("is-on", seEnabled);
+  }
+
+  function setRemainingFromInputs({ normalizeUI = true } = {}) {
+    const m = clampInt(minInput.value || "0", 0, 99);
+    const s = clampInt(secInput.value || "0", 0, 59);
+
+    if (normalizeUI) {
+      minInput.value = String(m);
+      secInput.value = String(s).padStart(2, "0");
+    }
+
+    remaining = m * 60 + s;
+    showTime(formatTime(m, s));
+  }
+
+  function onTimeInput() {
+    const m = clampInt(minInput.value || "0", 0, 99);
+    const s = clampInt(secInput.value || "0", 0, 59);
+    remaining = m * 60 + s;
+    showTime(formatTime(m, s));
+  }
+
+  function onTimeChange() {
+    setRemainingFromInputs({ normalizeUI: true });
+  }
+
+  // =========================
+  // Asset check
+  // =========================
+  function checkBackgroundImage() {
+    const img = new Image();
+    img.onload = () => {
+      document.body.classList.remove("image-fallback");
+    };
+    img.onerror = () => {
+      console.warn("Background image not found:", ASSETS.backgroundImage);
+      document.body.classList.add("image-fallback");
+    };
+    img.src = ASSETS.backgroundImage;
+  }
+
+  function bindAudioErrorLogs() {
+    [soundA, soundB, soundC].forEach((audio) => {
+      audio.addEventListener("error", () => {
+        console.warn(`Audio load error: ${audio.id}`, audio.currentSrc || audio.src);
+      });
+    });
+  }
+
+  // =========================
+  // Sequences
+  // =========================
+  function startMessageSequence() {
+    function tickMessage() {
+      const current = messages[messageIndex];
+      messageIndex = (messageIndex + 1) % messages.length;
+      showMessage(current.lang, current.text);
+    }
+
+    tickMessage();
+    messageTimerId = window.setInterval(tickMessage, 3000);
+  }
+
+  function startFinishSoundSequence() {
+    if (!seEnabled) return;
+
+    resetFinishSoundState();
+    soundB.currentTime = 0;
+    safePlay(soundB);
+  }
+
+  function finishCountdown() {
+    if (countdownTimerId !== null) {
+      clearInterval(countdownTimerId);
+      countdownTimerId = null;
+    }
+
+    if (bgmEnabled) {
+      soundA.volume = 0.25;
+    }
 
     startMessageSequence();
     startFinishSoundSequence();
   }
-}
 
-function startAll() {
-  if (bgmEnabled) {
-    soundA.volume = 0.6;
-    soundA.play().catch(() => {});
-  }
+  function updateCountdown() {
+    const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+    const seconds = String(remaining % 60).padStart(2, "0");
+    showTime(`${minutes}:${seconds}`);
 
-  countdownTimerId = setInterval(updateCountdown, 1000);
-  updateCountdown();
-}
-
-function runLaunchSequence() {
-  isLaunching = true;
-  startBtn.classList.add("engaged");
-  panelEl.classList.add("launch-pulse");
-  launchFlash.classList.add("active");
-  startOverlay.classList.add("launch-sequence");
-
-  setTimeout(() => {
-    clockEl.classList.remove("prelaunch-hidden");
-    clockEl.classList.add("launching-in");
-  }, 130);
-
-  setTimeout(() => {
-    startOverlay.style.display = "none";
-    clockEl.classList.remove("launching-in");
-    isLaunching = false;
-    startAll();
-  }, 520);
-}
-
-function startFromPanel() {
-  if (isLaunching) return;
-
-  stopTimers();
-  stopAllSounds();
-  setRemainingFromInputs({ normalizeUI: true });
-  runLaunchSequence();
-}
-
-function setBgmEnabled(nextValue) {
-  bgmEnabled = nextValue;
-
-  if (!bgmEnabled) {
-    soundA.pause();
-    soundA.currentTime = 0;
-  } else {
-    if (startOverlay.style.display === "none" && countdownTimerId) {
-      soundA.volume = 0.6;
-      soundA.play().catch(() => {});
+    if (remaining > 0) {
+      remaining -= 1;
+      return;
     }
+
+    finishCountdown();
   }
 
-  updateSwitchUI();
-}
+  function startAll() {
+    resetMessageState();
 
-function setSeEnabled(nextValue) {
-  seEnabled = nextValue;
+    if (bgmEnabled) {
+      soundA.volume = 0.6;
+      safePlay(soundA);
+    }
 
-  if (!seEnabled) {
-    soundB.pause();
-    soundB.currentTime = 0;
-    soundC.pause();
-    soundC.currentTime = 0;
+    countdownTimerId = window.setInterval(updateCountdown, 1000);
+    updateCountdown();
   }
 
-  updateSwitchUI();
-}
+  function runLaunchSequence() {
+    isLaunching = true;
+    startBtn.classList.add("engaged");
+    panelEl.classList.add("launch-pulse");
+    launchFlash.classList.add("active");
+    startOverlay.classList.add("launch-sequence");
 
-bgmToggleInput.addEventListener("change", () => {
-  setBgmEnabled(bgmToggleInput.checked);
-});
+    window.setTimeout(() => {
+      clockEl.classList.remove("prelaunch-hidden");
+      clockEl.classList.add("launching-in");
+    }, 130);
 
-seToggleInput.addEventListener("change", () => {
-  setSeEnabled(seToggleInput.checked);
-});
+    window.setTimeout(() => {
+      startOverlay.style.display = "none";
+      clockEl.classList.remove("launching-in");
+      isLaunching = false;
+      startAll();
+    }, 520);
+  }
 
-minInput.addEventListener("input", onTimeInput);
-secInput.addEventListener("input", onTimeInput);
-minInput.addEventListener("change", onTimeChange);
-secInput.addEventListener("change", onTimeChange);
+  function startFromPanel() {
+    if (isLaunching) return;
 
-[minInput, secInput].forEach(el => {
-  el.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    stopTimers();
+    stopAllSounds();
+    resetMessageState();
+    resetFinishSoundState();
+    setRemainingFromInputs({ normalizeUI: true });
+    runLaunchSequence();
+  }
+
+  // =========================
+  // Switches
+  // =========================
+  function setBgmEnabled(nextValue) {
+    bgmEnabled = Boolean(nextValue);
+
+    if (!bgmEnabled) {
+      stopAudio(soundA);
+    } else {
+      if (isOverlayHidden() && countdownTimerId !== null) {
+        soundA.volume = 0.6;
+        safePlay(soundA);
+      }
+    }
+
+    updateSwitchUI();
+  }
+
+  function setSeEnabled(nextValue) {
+    seEnabled = Boolean(nextValue);
+
+    if (!seEnabled) {
+      stopAudio(soundB);
+      stopAudio(soundC);
+    }
+
+    updateSwitchUI();
+  }
+
+  // =========================
+  // Events
+  // =========================
+  bgmToggleInput.addEventListener("change", () => {
+    setBgmEnabled(bgmToggleInput.checked);
+  });
+
+  seToggleInput.addEventListener("change", () => {
+    setSeEnabled(seToggleInput.checked);
+  });
+
+  minInput.addEventListener("input", onTimeInput);
+  secInput.addEventListener("input", onTimeInput);
+  minInput.addEventListener("change", onTimeChange);
+  secInput.addEventListener("change", onTimeChange);
+
+  [minInput, secInput].forEach((el) => {
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        startFromPanel();
+      }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!isOverlayHidden() && e.key === "Enter") {
       startFromPanel();
     }
   });
-});
 
-document.addEventListener("keydown", (e) => {
-  if (startOverlay.style.display !== "none" && e.key === "Enter") {
-    startFromPanel();
-  }
-});
+  startBtn.addEventListener("click", startFromPanel);
 
-startBtn.addEventListener("click", startFromPanel);
+  soundB.addEventListener("ended", () => {
+    if (!seEnabled) return;
 
-soundB.addEventListener("ended", () => {
-  if (!seEnabled) return;
+    if (!cycleMode) {
+      engineLoopsLeft -= 1;
 
-  if (!cycleMode) {
-    engineLoopsLeft--;
-    if (engineLoopsLeft > 0) {
-      soundB.currentTime = 0;
-      soundB.play().catch(() => {});
+      if (engineLoopsLeft > 0) {
+        soundB.currentTime = 0;
+        safePlay(soundB);
+      } else {
+        soundC.currentTime = 0;
+        safePlay(soundC);
+      }
     } else {
       soundC.currentTime = 0;
-      soundC.play().catch(() => {});
+      safePlay(soundC);
     }
-  } else {
-    soundC.currentTime = 0;
-    soundC.play().catch(() => {});
+  });
+
+  soundC.addEventListener("ended", () => {
+    if (!seEnabled) return;
+
+    cycleMode = true;
+    soundB.currentTime = 0;
+    safePlay(soundB);
+  });
+
+  // =========================
+  // Init
+  // =========================
+  function init() {
+    bindAudioErrorLogs();
+    checkBackgroundImage();
+    updateSwitchUI();
+    setRemainingFromInputs({ normalizeUI: true });
   }
-});
 
-soundC.addEventListener("ended", () => {
-  if (!seEnabled) return;
-
-  cycleMode = true;
-  soundB.currentTime = 0;
-  soundB.play().catch(() => {});
-});
-
-updateSwitchUI();
-setRemainingFromInputs({ normalizeUI: true });
+  init();
+})();
