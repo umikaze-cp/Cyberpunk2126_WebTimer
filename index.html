@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cyberpunk2126 WebTimer</title>
-
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/CP_favicon_3.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div id="startOverlay" aria-label="start overlay">
+  <div id="startOverlay">
     <div id="panel">
       <div id="launchFlash"></div>
       <span class="panel-cut lt"></span>
@@ -37,32 +36,14 @@
             <div class="time-picker" aria-label="時間設定">
               <div class="time-field">
                 <span class="time-label">MIN</span>
-                <input
-                  id="minInput"
-                  class="time-input"
-                  type="number"
-                  min="0"
-                  max="99"
-                  value="10"
-                  inputmode="numeric"
-                  aria-label="分"
-                />
+                <input id="minInput" class="time-input" type="number" min="0" max="99" value="10" inputmode="numeric" />
               </div>
 
               <div class="time-separator">:</div>
 
               <div class="time-field">
                 <span class="time-label">SEC</span>
-                <input
-                  id="secInput"
-                  class="time-input"
-                  type="number"
-                  min="0"
-                  max="59"
-                  value="0"
-                  inputmode="numeric"
-                  aria-label="秒"
-                />
+                <input id="secInput" class="time-input" type="number" min="0" max="59" value="0" inputmode="numeric" />
               </div>
             </div>
           </div>
@@ -105,7 +86,7 @@
             <span class="module-sub">Final authorization</span>
           </div>
 
-          <button id="startBtn" type="button">▶ ENGAGE</button>
+          <button id="startBtn">▶ ENGAGE</button>
 
           <div id="hint">
             <span class="hint-top">manual override</span>
@@ -122,17 +103,22 @@
     </div>
   </div>
 
-  <div id="clock" class="prelaunch-hidden" aria-live="polite">
+  <div id="clock" class="prelaunch-hidden">
     <span id="timeDisplay">10:00</span>
     <span id="msgJa"></span>
     <span id="msgEn"></span>
   </div>
 
-  <!-- Audio -->
+  <div id="runtimeDock" class="hidden" aria-label="runtime controls">
+    <button id="pauseToggleBtn" class="dock-btn" type="button" aria-label="pause or resume">❚❚</button>
+    <button id="resetBtn" class="dock-btn dock-btn-reset" type="button" aria-label="reset">↺</button>
+  </div>
+
   <audio id="soundA" src="assets/sounds/BGM.mp3" preload="auto" loop></audio>
   <audio id="soundB" src="assets/sounds/bike_A.mp3" preload="auto"></audio>
   <audio id="soundC" src="assets/sounds/bike_B.mp3" preload="auto"></audio>
 
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
+
 </html>

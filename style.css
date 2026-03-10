@@ -8,6 +8,11 @@
   --text-sub: rgba(255, 219, 176, 0.62);
   --amber: rgba(255, 166, 68, 1);
   --shadow-deep: rgba(0, 0, 0, 0.55);
+  --dock-bg: rgba(12, 6, 4, 0.78);
+  --dock-border: rgba(255, 181, 102, 0.22);
+  --dock-icon: rgba(255, 242, 226, 0.95);
+  --dock-reset: rgba(255, 183, 128, 0.95);
+  --hold-glow: rgba(161, 120, 255, 0.44);
 }
 
 * {
@@ -18,7 +23,6 @@ body {
   text-align: center;
   font-size: 120px;
   font-family: monospace;
-  background-color: #080505;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
     url("assets/images/CP_image.jpg");
@@ -34,13 +38,6 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
-}
-
-/* 画像が存在しない場合でも最低限見た目が崩れない */
-body.image-fallback {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)),
-    radial-gradient(circle at center, #35160a 0%, #100806 55%, #050304 100%);
 }
 
 @keyframes rainbowGlow {
@@ -190,6 +187,26 @@ body.image-fallback {
   }
 }
 
+@keyframes holdPulse {
+  0% {
+    box-shadow:
+      0 0 18px rgba(125, 103, 255, 0.16),
+      inset 0 0 16px rgba(132, 114, 255, 0.08);
+  }
+
+  50% {
+    box-shadow:
+      0 0 34px rgba(146, 118, 255, 0.28),
+      inset 0 0 22px rgba(146, 118, 255, 0.14);
+  }
+
+  100% {
+    box-shadow:
+      0 0 18px rgba(125, 103, 255, 0.16),
+      inset 0 0 16px rgba(132, 114, 255, 0.08);
+  }
+}
+
 #clock {
   padding: 40px 70px;
   border: 10px solid;
@@ -208,6 +225,7 @@ body.image-fallback {
     color 0.25s ease;
 }
 
+/* メッセージ表示中は枠だけ消す。文字色は虹ネオンのまま */
 #clock.message-mode {
   border-color: transparent !important;
   box-shadow: none !important;
@@ -227,10 +245,22 @@ body.image-fallback {
     clockWake 0.45s ease-out;
 }
 
+#clock.paused {
+  background: rgba(12, 7, 20, 0.34);
+  filter: saturate(0.84);
+  animation:
+    rainbowGlow 3s linear infinite,
+    holdPulse 1.9s ease-in-out infinite;
+  box-shadow:
+    0 0 24px var(--hold-glow),
+    inset 0 0 22px rgba(158, 126, 255, 0.10);
+}
+
 .fade-message {
   animation: fadeInOut 3s ease-in-out;
 }
 
+/* メッセージ時も虹色ネオン + フェード */
 #clock.message-mode.fade-message {
   animation:
     rainbowGlow 3s linear infinite,
@@ -730,6 +760,70 @@ body.image-fallback {
   white-space: nowrap;
 }
 
+#runtimeDock {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  gap: 12px;
+  z-index: 8;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#runtimeDock.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+.dock-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  border: 1px solid var(--dock-border);
+  background: linear-gradient(180deg, rgba(32, 13, 8, 0.92), var(--dock-bg));
+  color: var(--dock-icon);
+  font-size: 28px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 0 18px rgba(255, 148, 54, 0.14),
+    inset 0 0 12px rgba(255, 210, 166, 0.05);
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  backdrop-filter: blur(8px);
+  user-select: none;
+}
+
+.dock-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 24px rgba(255, 153, 61, 0.24),
+    inset 0 0 14px rgba(255, 220, 176, 0.10);
+}
+
+.dock-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.dock-btn.is-paused {
+  color: rgba(231, 224, 255, 0.98);
+  border-color: rgba(172, 145, 255, 0.34);
+  box-shadow:
+    0 0 22px rgba(138, 118, 255, 0.28),
+    inset 0 0 14px rgba(196, 185, 255, 0.10);
+}
+
+.dock-btn-reset {
+  color: var(--dock-reset);
+  border-color: rgba(255, 166, 120, 0.30);
+}
+
 @media (max-width: 720px) {
   body {
     font-size: 90px;
@@ -781,5 +875,18 @@ body.image-fallback {
 
   #clock.message-mode {
     padding: 18px 20px;
+  }
+
+  #runtimeDock {
+    right: 14px;
+    bottom: 14px;
+    gap: 10px;
+  }
+
+  .dock-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 26px;
+    border-radius: 14px;
   }
 }
