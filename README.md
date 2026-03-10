@@ -39,4 +39,4 @@
 
 ## ストーリー
 本作品の世界観はこちら
-[Cyberpunk Story](Cyberpunk_story.md)
+[Cyberpunk Story](Cyberpunk2126_story.md)
