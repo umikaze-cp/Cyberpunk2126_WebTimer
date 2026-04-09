@@ -84,6 +84,17 @@ body {
   }
 }
 
+/* rainbowGlow と同じ色変化だが border-color を含まない (message-mode 専用) */
+@keyframes rainbowColor {
+  0%   { color: red;    text-shadow: 0 0 20px red,    0 0 40px red; }
+  16%  { color: orange; text-shadow: 0 0 20px orange, 0 0 40px orange; }
+  32%  { color: yellow; text-shadow: 0 0 20px yellow, 0 0 40px yellow; }
+  48%  { color: lime;   text-shadow: 0 0 20px lime,   0 0 40px lime; }
+  64%  { color: cyan;   text-shadow: 0 0 20px cyan,   0 0 40px cyan; }
+  82%  { color: blue;   text-shadow: 0 0 20px blue,   0 0 40px blue; }
+  100% { color: violet; text-shadow: 0 0 20px violet, 0 0 40px violet; }
+}
+
 @keyframes fadeInOut {
   0% {
     opacity: 0;
@@ -225,12 +236,13 @@ body {
     color 0.25s ease;
 }
 
-/* メッセージ表示中は枠だけ消す。文字色は虹ネオンのまま */
+/* メッセージ表示中は枠を消す。animation を rainbowColor に差し替えて border-color アニメを排除 */
 #clock.message-mode {
   border-color: transparent !important;
   box-shadow: none !important;
   background: transparent;
   padding: 24px 40px;
+  animation: rainbowColor 3s linear infinite;
 }
 
 #clock.prelaunch-hidden {
@@ -260,10 +272,10 @@ body {
   animation: fadeInOut 3s ease-in-out;
 }
 
-/* メッセージ時も虹色ネオン + フェード */
+/* メッセージ時: border-color を持たない rainbowColor + フェード */
 #clock.message-mode.fade-message {
   animation:
-    rainbowGlow 3s linear infinite,
+    rainbowColor 3s linear infinite,
     fadeInOut 3s ease-in-out;
 }
 
@@ -1133,5 +1145,83 @@ body {
     height: 46px;
     font-size: 22px;
     border-radius: 12px;
+  }
+}
+
+/* ---- iPad compact 横表示 (iPad mini 6 / iPad 9th gen / iPad Air 等) ---- */
+/* viewport height 501〜820px の横向き端末 */
+@media (orientation: landscape) and (min-height: 501px) and (max-height: 820px) {
+  #startOverlay {
+    overflow-y: auto;
+    align-items: flex-start;
+    padding: 14px 24px;
+  }
+
+  #panel {
+    width: min(760px, 90vw);
+    padding: 14px 16px 12px;
+    margin: auto;
+  }
+
+  /* 2カラムグリッドレイアウト */
+  #panelContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+
+  /* header: 全幅 */
+  #panelContent > *:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Timer: 左列、行 2〜3 をまたぐ */
+  #panelContent > *:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    margin: 0;
+  }
+
+  /* Audio: 右列 行 2 */
+  #panelContent > *:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+  }
+
+  /* Launch: 右列 行 3 */
+  #panelContent > *:nth-child(4) {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 0;
+  }
+
+  /* footer: 全幅 */
+  #panelContent > *:last-child {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+
+  .panel-header {
+    margin-bottom: 0;
+  }
+
+  .module {
+    padding: 10px 12px 12px;
+    margin: 0;
+  }
+
+  .launch-block {
+    margin-top: 0;
+  }
+
+  .switch {
+    width: 100%;
+  }
+
+  #startBtn {
+    width: 100%;
+    min-width: unset;
   }
 }
