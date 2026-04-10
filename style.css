@@ -1004,7 +1004,7 @@ body::before {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4px;
-    align-items: start;
+    align-items: stretch;
   }
 
   /* header: 全幅 */
@@ -1024,11 +1024,15 @@ body::before {
     display: none;
   }
 
-  /* Launch module: 右列 行 2 */
+  /* Launch module: 右列 行 2 — タイマーと同じ高さに揃えて縦中央 */
   #panelContent > *:nth-child(4) {
     grid-column: 2;
     grid-row: 2;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
   }
 
   /* footer: 全幅 */

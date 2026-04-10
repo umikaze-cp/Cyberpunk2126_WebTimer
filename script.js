@@ -413,6 +413,15 @@ secInput.addEventListener("input", onTimeInput);
 minInput.addEventListener("change", onTimeChange);
 secInput.addEventListener("change", onTimeChange);
 
+// iOS キーボード展開後に ENGAGE ボタンをスクロールして見える位置へ
+[minInput, secInput].forEach(el => {
+  el.addEventListener("focus", () => {
+    setTimeout(() => {
+      startBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 400);
+  });
+});
+
 [minInput, secInput].forEach(el => {
   el.addEventListener("keydown", e => {
     if (e.key === "Enter") {
