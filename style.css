@@ -986,15 +986,15 @@ body::before {
   }
 
   #startOverlay {
-    /* 横向き: 左右の safe-area (Dynamic Island) を確保、上下は最小 8px */
-    padding: 8px max(8px, env(safe-area-inset-right)) 8px max(8px, env(safe-area-inset-left));
+    /* 横向き: 左右の safe-area (Dynamic Island) を確保、上下は最小 4px */
+    padding: 4px max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
     overflow-y: auto;
     align-items: flex-start;
   }
 
   #panel {
     width: min(580px, calc(94vw - env(safe-area-inset-left) - env(safe-area-inset-right)));
-    padding: 8px 10px 6px;
+    padding: 6px 10px 4px;
     border-radius: 18px;
     margin: auto;
   }
@@ -1003,7 +1003,7 @@ body::before {
   #panelContent {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 4px;
     align-items: start;
   }
 
@@ -1059,7 +1059,7 @@ body::before {
   }
 
   .module {
-    padding: 6px 8px 8px;
+    padding: 5px 8px 6px;
     border-radius: 14px;
   }
 
@@ -1068,7 +1068,7 @@ body::before {
   }
 
   .module-header {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .module-title {
@@ -1097,12 +1097,12 @@ body::before {
   }
 
   .switch-row {
-    gap: 6px;
+    gap: 4px;
   }
 
   .switch {
     width: 100%;
-    padding: 7px 10px;
+    padding: 5px 8px;
     border-radius: 12px;
   }
 
@@ -1129,8 +1129,8 @@ body::before {
   }
 
   #startBtn {
-    font-size: 20px;
-    padding: 8px 14px;
+    font-size: 18px;
+    padding: 7px 12px;
     min-width: unset;
     width: 100%;
     border-radius: 14px;
