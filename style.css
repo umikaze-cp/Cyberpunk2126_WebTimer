@@ -1020,7 +1020,7 @@ body::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 18px;
+    gap: 12px;
   }
 
   /* Audio module: モバイル横表示では非表示 */
