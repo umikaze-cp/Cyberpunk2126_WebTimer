@@ -1069,6 +1069,12 @@ body::before {
     border-radius: 14px;
   }
 
+  /* タイマーと Launch の module-header を非表示: キーボード展開時でも両要素が見える高さに */
+  #panelContent > *:nth-child(2) .module-header,
+  #panelContent > *:nth-child(4) .module-header {
+    display: none;
+  }
+
   .launch-block {
     margin-top: 0;
   }
