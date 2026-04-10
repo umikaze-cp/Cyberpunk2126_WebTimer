@@ -21,7 +21,7 @@
 
 body {
   text-align: center;
-  font-size: 120px;
+  font-size: min(120px, 14vmin); /* 画面比率に比例: 小さい辺の 14% を上限 120px でキャップ */
   font-family: monospace;
   color: white;
   margin: 0;
