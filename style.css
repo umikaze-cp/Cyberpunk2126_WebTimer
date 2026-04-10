@@ -869,6 +869,14 @@ body::before {
   50%       { transform: rotate(90deg); }
 }
 
+.rotate-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
 .rotate-icon {
   font-size: 56px;
   color: var(--amber);
