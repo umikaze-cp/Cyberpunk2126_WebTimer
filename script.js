@@ -347,8 +347,21 @@ function runLaunchSequence() {
   }, 520);
 }
 
+/**
+ * iOS Safari ではユーザージェスチャー外からの play() がブロックされる。
+ * ボタン押下時に全音源を play→pause して "unlock" しておく。
+ */
+function unlockAudioForIOS() {
+  [soundA, soundB, soundC].forEach(audio => {
+    const p = audio.play();
+    if (p) p.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+  });
+}
+
 function startFromPanel() {
   if (appState === APP_STATE.LAUNCHING) return;
+
+  unlockAudioForIOS();
 
   stopTimers();
   stopAllSounds({ resetTime: true });

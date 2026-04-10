@@ -23,13 +23,6 @@ body {
   text-align: center;
   font-size: 120px;
   font-family: monospace;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
-    url("assets/images/CP_image.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   color: white;
   margin: 0;
   padding: 0;
@@ -38,6 +31,20 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+}
+
+/* iOS Safari 対応: position:fixed で常に visual viewport を正確に覆う */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
+    url("assets/images/CP_image.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 @keyframes rainbowGlow {
@@ -836,12 +843,6 @@ body {
   border-color: rgba(255, 166, 120, 0.30);
 }
 
-/* iOS: background-attachment: fixed は iOS Safari で動作しないため scroll に変更 */
-@media (max-width: 1366px) and (pointer: coarse) {
-  body {
-    background-attachment: scroll;
-  }
-}
 
 /* ---- 縦向き警告 (phone / tablet 縦表示) ---- */
 #rotatePrompt {
