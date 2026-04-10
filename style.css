@@ -1141,18 +1141,13 @@ body::before {
     top: -9px;
   }
 
+  /* スマホ横表示ではヒントとフッターを非表示: ENGAGE ボタンが確実に収まる */
   #hint {
-    margin-top: 6px;
-    font-size: 9px;
-  }
-
-  .hint-top {
-    font-size: 8px;
-    margin-bottom: 2px;
+    display: none;
   }
 
   .panel-footer {
-    font-size: 8px;
+    display: none;
   }
 
   #runtimeDock {
