@@ -31,6 +31,7 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+  background-color: #030201; /* レターボックス部分の色 (Cyberpunk の夜に溶け込む黒) */
 }
 
 /* iOS Safari 対応: position:fixed で常に visual viewport を正確に覆う */
@@ -1152,6 +1153,17 @@ body::before {
 /* ---- iPad compact 横表示 (iPad mini 6 / iPad 9th gen / iPad Air 等) ---- */
 /* viewport height 501〜820px の横向き端末 */
 @media (orientation: landscape) and (min-height: 501px) and (max-height: 820px) {
+  /*
+   * 背景: 画像のアスペクト比 ~2.13:1 > iPad mini 6 横 ~1.72:1
+   * cover では左右が ~134px ずつカットされバイク乗り・ロゴが切れる。
+   * 100% auto に切り替えて横幅いっぱいのシネマスコープ表示に。
+   * 上下 ~63px のレターボックスは body の background-color (#030201) で補完。
+   */
+  body::before {
+    background-size: 100% auto;
+    background-position: center center;
+  }
+
   #startOverlay {
     overflow-y: auto;
     align-items: flex-start;
