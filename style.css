@@ -1012,24 +1012,22 @@ body::before {
     grid-column: 1 / -1;
   }
 
-  /* Timer module: 左列、行 2〜3 をまたぐ */
+  /* Timer module: 左列 行 2 */
   #panelContent > *:nth-child(2) {
     grid-column: 1;
-    grid-row: 2 / 4;
-    margin: 0;
-  }
-
-  /* Audio module: 右列 行 2 */
-  #panelContent > *:nth-child(3) {
-    grid-column: 2;
     grid-row: 2;
     margin: 0;
   }
 
-  /* Launch module: 右列 行 3 */
+  /* Audio module: モバイル横表示では非表示 */
+  #panelContent > *:nth-child(3) {
+    display: none;
+  }
+
+  /* Launch module: 右列 行 2 */
   #panelContent > *:nth-child(4) {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 2;
     margin: 0;
   }
 
@@ -1129,8 +1127,8 @@ body::before {
   }
 
   #startBtn {
-    font-size: 18px;
-    padding: 7px 12px;
+    font-size: 20px;
+    padding: 10px 14px;
     min-width: unset;
     width: 100%;
     border-radius: 14px;
