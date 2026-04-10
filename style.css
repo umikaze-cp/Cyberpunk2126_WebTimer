@@ -855,7 +855,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(4, 2, 1, 0.97);
+  background: #030201; /* 完全不透明: OLED 高輝度でも背景コンテンツが透けない */
   justify-content: center;
   align-items: center;
   flex-direction: column;
