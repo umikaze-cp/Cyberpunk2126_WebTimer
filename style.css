@@ -1020,7 +1020,7 @@ body::before {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    gap: 6px;
+    gap: 2px;
   }
 
   /* Audio module: モバイル横表示では非表示 */
@@ -1091,7 +1091,7 @@ body::before {
 
   .time-picker {
     gap: 6px;
-    padding: 6px 8px;
+    padding: 4px 8px;
     border-radius: 14px;
   }
 
