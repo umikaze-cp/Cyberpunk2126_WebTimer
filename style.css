@@ -1019,8 +1019,8 @@ body::before {
     margin: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 2px;
+    justify-content: center;
+    gap: 6px;
   }
 
   /* Audio module: モバイル横表示では非表示 */
@@ -1035,8 +1035,8 @@ body::before {
     margin: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 12px;
+    justify-content: center;
+    gap: 6px;
   }
 
   /* footer: 全幅 */
