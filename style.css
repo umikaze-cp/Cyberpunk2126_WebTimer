@@ -985,6 +985,11 @@ body::before {
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  body::before {
+    background-size: 100% auto;
+    background-position: center center;
+  }
+
   #startOverlay {
     /* 横向き: 左右の safe-area (Dynamic Island) を確保、上下は最小 4px */
     padding: 4px max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
