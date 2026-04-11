@@ -40,7 +40,7 @@ const soundA = document.getElementById("soundA");
 const soundB = document.getElementById("soundB");
 const soundC = document.getElementById("soundC");
 
-let bgmEnabled = true;
+let bgmEnabled = false;
 let seEnabled = true;
 
 let countdownTimerId = null;
