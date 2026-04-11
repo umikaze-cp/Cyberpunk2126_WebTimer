@@ -993,45 +993,37 @@ body::before {
   }
 
   #panel {
-    width: min(580px, calc(94vw - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    width: min(400px, calc(88vw - env(safe-area-inset-left) - env(safe-area-inset-right)));
     padding: 6px 10px 4px;
     border-radius: 18px;
     margin: auto;
   }
 
-  /* 2カラムグリッドレイアウト */
+  /* 1カラムグリッド: モバイルはENGAGEのみ */
   #panelContent {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 4px;
-    align-items: stretch;
   }
 
   /* header: 全幅 */
   #panelContent > *:first-child {
-    grid-column: 1 / -1;
-  }
-
-  /* Timer module: 左列 行 2 */
-  #panelContent > *:nth-child(2) {
     grid-column: 1;
-    grid-row: 2;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 8px;
   }
 
-  /* Audio module: モバイル横表示では非表示 */
+  /* Timer module: モバイルでは非表示（10分固定） */
+  #panelContent > *:nth-child(2) {
+    display: none;
+  }
+
+  /* Audio module: モバイルでは非表示 */
   #panelContent > *:nth-child(3) {
     display: none;
   }
 
-  /* Launch module: 右列 行 2 */
+  /* Launch module: 全幅 */
   #panelContent > *:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
+    grid-column: 1;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -1041,7 +1033,7 @@ body::before {
 
   /* footer: 全幅 */
   #panelContent > *:last-child {
-    grid-column: 1 / -1;
+    grid-column: 1;
     margin-top: 4px;
   }
 
