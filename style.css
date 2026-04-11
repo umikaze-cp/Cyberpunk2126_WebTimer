@@ -1152,6 +1152,13 @@ body::before {
     display: none;
   }
 
+  #clock {
+    font-size: 60px;
+    padding: 16px 36px;
+    border-width: 6px;
+    border-radius: 18px;
+  }
+
   #runtimeDock {
     right: max(10px, env(safe-area-inset-right));
     bottom: max(10px, env(safe-area-inset-bottom));
