@@ -1147,8 +1147,7 @@ body::before {
   }
 
   #startBtn::before {
-    font-size: 8px;
-    top: -9px;
+    display: none;
   }
 
   /* スマホ横表示ではヒントとフッターを非表示: ENGAGE ボタンが確実に収まる */
