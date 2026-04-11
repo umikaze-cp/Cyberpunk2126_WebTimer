@@ -979,7 +979,8 @@ body::before {
 @media (orientation: landscape) and (max-height: 500px) {
   body {
     font-size: 80px;
-    /* Dynamic Island (左右) / ホームインジケータ (下) を避けて clock/message を配置 */
+    /* Dynamic Island / ステータスバー / ホームインジケータ を考慮して clock を真中に配置 */
+    padding-top: env(safe-area-inset-top);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
