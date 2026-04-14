@@ -1,6 +1,6 @@
 {
   "name": "Cyberpunk 2126 Timer",
-  "short_name": "CP2126 Timer",
+  "short_name": "CP2126Timer",
   "description": "Cyberpunk-themed countdown timer",
   "start_url": "./index.html",
   "display": "standalone",
@@ -9,7 +9,7 @@
   "theme_color": "#0a0a0f",
   "icons": [
     {
-      "src": "assets/images/CP_favicon_3.png",
+      "src": "assets/images/apple-touch-icon.png",
       "sizes": "any",
       "type": "image/png",
       "purpose": "any maskable"
