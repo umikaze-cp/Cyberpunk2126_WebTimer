@@ -1,5 +1,5 @@
 {
-  "name": "Cyberpunk 2126 Timer",
+  "name": "Cyberpunk2126 Timer",
   "short_name": "CP2126Timer",
   "description": "Cyberpunk-themed countdown timer",
   "start_url": "./index.html",
